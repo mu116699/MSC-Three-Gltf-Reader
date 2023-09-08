@@ -1,7 +1,7 @@
 # MSC-Three-Gltf-Reader
  MSC-Three-Gltf-Reader :a three.js html project
 
-![Image text](https://github.com/mu116699/MSC-Three-Gltf-Reader/blob/master/123.gif)
+![Image](https://github.com/mu116699/MSC-Three-Gltf-Reader/blob/master/123.gif)
 
 The GIF above demonstrates the basic usage rules of the software, which mainly include the following two aspects:
     1.View Manipulation: Right-click with the mouse to move and rotate the view; use the mouse scroll wheel to zoom the view; right-click again to perform movement operations.
