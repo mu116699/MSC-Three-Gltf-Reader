@@ -128,10 +128,90 @@
       </div>
     </div>
 
-    <div class="openfile-title" style="position: absolute; top: 100px; left: 50px;">
+    <div id="dialog-camera" class="dialog-camera">
+    <div class="dialog-camera-content">
+      <h2 id="dialog-camera-title"></h2>
+
+      <h1 style="text-align: center; font-size: 20px;"><strong>Set Camera Param</strong></h1>
+      <h2 style="text-align: center;font-size: 18px;"><strong>Set Camera Position:</strong></h2>
+      <div class="inline-container">
+        <p>X:</p>
+        <input type="range" v-model="cameraPosition.x" min="-10000" max="10000" step="1" placeholder="300">
+        <span>{{ cameraPosition.x }}</span>
+      </div>
+      <div class="inline-container">
+        <p>Y:</p>
+        <input type="range" v-model="cameraPosition.y" min="-10000" max="10000" step="1" placeholder="300">
+        <span>{{ cameraPosition.y }}</span>
+      </div>
+      <div class="inline-container">
+        <p>Z:</p>
+        <input type="range" v-model="cameraPosition.z" min="-10000" max="10000" step="1" placeholder="300">
+        <span>{{ cameraPosition.z }}</span>
+      </div>
+      <!--
+      <h2 style="text-align: center;font-size: 18px;"><strong>Set Camera lookAt:</strong></h2>
+      <div class="inline-container">
+        <p>X:</p>
+        <input type="range" v-model="cameraLookAt.x" min="-10000" max="10000" step="1" placeholder="0">
+        <span>{{ cameraLookAt.x }}</span>
+      </div>
+      <div class="inline-container">
+        <p>Y:</p>
+        <input type="range" v-model="cameraLookAt.y" min="-10000" max="10000" step="1" placeholder="0">
+        <span>{{ cameraLookAt.y }}</span>
+      </div>
+      <div class="inline-container">
+        <p>Z:</p>
+        <input type="range" v-model="cameraLookAt.z" min="-10000" max="10000" step="1" placeholder="0">
+        <span>{{ cameraLookAt.z }}</span>
+      </div>
+      -->
+      <h2 style="text-align: center;font-size: 18px;"><strong>Set Camera Up:</strong></h2>
+      <div class="inline-container">
+        <p>X:</p>
+        <input type="range" v-model="cameraUp.x" min="-1" max="1" step="0.1" placeholder="0">
+        <span>{{ cameraUp.x }}</span>
+      </div>
+      <div class="inline-container">
+        <p>Y:</p>
+        <input type="range" v-model="cameraUp.y" min="-1" max="1" step="0.1" placeholder="1">
+        <span>{{ cameraUp.y }}</span>
+      </div>
+      <div class="inline-container">
+        <p>Z:</p>
+        <input type="range" v-model="cameraUp.z" min="-1" max="1" step="0.1" placeholder="0">
+        <span>{{ cameraUp.z }}</span>
+      </div>
+
+      <div class="button-container">
+        <button @click="handleOKClick1">OK</button>
+        <button @click="handleCancelClick1">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+
+
+    <div class="openfile-title" style="position: absolute; top: 100px; left: 20px;">
     <button class="custom-button" @click="openFile">Open File</button>
     </div>
+     <div class="openfile-title" style="position: absolute; top: 140px; left: 20px;">
+    <button class="custom-button" @click="saveImage">Save Image</button>
+    </div>
+    <div class="openfile-title" style="position: absolute; top: 180px; left: 20px;">
+    <button class="custom-button" @click="saveScene_Json">Save Gltf</button>
+    </div>
 
+    <div class="openfile-title" style="position: absolute; top: 280px; left: 20px;">
+    <button class="custom-button" @click="setCameraParam">Set Camera</button>
+    </div>
+    <div class="openfile-title" style="position: absolute; top: 320px; left: 20px;">
+    <button class="custom-button" @click="explosiveView">Explosive View</button>
+    </div>
+    <div class="openfile-title" style="position: absolute; top: 360px; left: 20px;">
+    <button class="custom-button" @click="restoreExplosiveView">Restore EV</button>
+    </div>
   </div>
 </template>
 
@@ -141,6 +221,7 @@ import {onMounted, ref} from 'vue'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js'
 import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader.js'
+import {GLTFExporter} from 'three/examples/jsm/exporters/GLTFExporter.js';
 
 let controls;
 let canvasDom = ref(null);
@@ -267,6 +348,38 @@ const render = () => {
   requestAnimationFrame(render);
   carbmw && (carbmw.rotation.y += rotationSpeed);
 };
+let delSceneClick = false,isSetCamera = false;
+const cameraPosition = ref({x: camera.position.x,y: camera.position.y,z: camera.position.z});
+const cameraUp = ref({x: camera.up.x,y: camera.up.y,z: camera.up.z});
+//const cameraLookAt = ref({x: 0,y: 0,z: 0});
+function updateCameraParams() {
+// 获取相机参数并进行其他操作
+  const position = { ...cameraPosition.value };
+  //const lookAt = { ...cameraLookAt.value };
+  const up = { ...cameraUp.value };
+  
+  camera.position.set(position.x, position.y, position.z);
+  //修改相机的上方向
+  // 设置相机的上方向
+  camera.up.set(up.x, up.y, up.z).normalize();
+  // 在控制台打印相机参数，测试用
+  console.log("Camera Position:", position);
+  console.log("Camera Up:", up);
+  //console.log("Camera LookAt:", lookAt);
+}
+
+function handleOKClick1() {
+  // 关闭对话框或执行其他操作
+  document.getElementById('dialog-camera').style.display = 'none';
+  event.stopPropagation();
+  isSetCamera = false;
+}
+function handleCancelClick1() {
+  // 关闭对话框或执行其他操作
+  document.getElementById('dialog-camera').style.display = 'none';
+  event.stopPropagation();
+  isSetCamera = false;
+}
 
 //重现渲染窗口的大小
 //监听窗口变化
@@ -347,6 +460,15 @@ function fitCameraToObject(object, camera) {
     //controls.update();
   //}
 }
+function getBottomCenter(object) {
+  object.updateMatrixWorld(); // 确保模型的世界矩阵已更新
+
+  const box = new THREE.Box3().setFromObject(object);
+  const center = new THREE.Vector3();
+  box.getCenter(center);
+
+  return center;
+}
 
 function openFile() {
   console.log('openFile');
@@ -376,7 +498,10 @@ function openFile() {
         loader.load(filePath,
           (gltf) => {
             carbmw = gltf.scene;
-            carbmw.position.set(0, 0, 0);
+            carbmw.position.y -= getBottomCenter(carbmw).y;
+            const offset = new THREE.Vector3();
+            carbmw.getWorldPosition(offset); // 获取模型的世界坐标
+            carbmw.position.sub(offset); // 偏移模型的位置以将其移动到原点
             scene.add(carbmw);
             render();
             fitCameraToObject(carbmw, camera);
@@ -529,9 +654,18 @@ onMounted(() => {
   light9.position.set(0, 600, -300);
   scene.add(light9);
   document.getElementById('dialog').style.display = 'none';
-  document.addEventListener('contextmenu', handleCancelClick)
+  document.getElementById('dialog-camera').style.display = 'none';
+  document.addEventListener('contextmenu', handleCancelClick)//取消右键默认事件
+  document.addEventListener('contextmenu', handleCancelClick1)
 });
 
+function setCameraParam() {
+  console.log('setCameraParam');
+  // 打开对话框
+  document.getElementById('dialog-camera').style.display = 'block';
+  event.stopPropagation();
+  isSetCamera = true;
+}
 
 function toggleRotation() {
   if (checkbox.value.checked) {
@@ -557,7 +691,7 @@ const materialGlass = new THREE.MeshPhysicalMaterial({
 });
 
 let metalnessRadioButtons = ["false","false","true"];
-let selectObject,oldColor,delSceneClick;
+let selectObject,oldColor;
 function setMetalnessRadioButtons() {
   metalnessRadioButtons = document.getElementsByName('metalness');
   for (let i = 0; i < metalnessRadioButtons.length; i++) {
@@ -569,6 +703,7 @@ function setMetalnessRadioButtons() {
   }
   console.log(metalnessRadioButtons);
 }
+
 function handleOKClick() {
   console.log('handleOKClick');
   console.log(metalnessRadioButtons);
@@ -659,7 +794,13 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 //创建点击事件
 window.addEventListener('click', (event) => {
-    if(delSceneClick)
+    console.log(isSetCamera);
+    if(isSetCamera)
+    {
+      updateCameraParams();
+      console.log("updateCameraParams");
+    }
+    if(delSceneClick||isSetCamera)
     {
       return;
     }
@@ -695,6 +836,83 @@ window.addEventListener('click', (event) => {
       }
     }
 });
+function saveImage()
+{
+  renderer.render(scene, camera);
+  // 将渲染内容转换为DataURL
+  const dataURL = renderer.domElement.toDataURL("image/png");
+
+  // 创建一个新窗口或新标签页打开DataURL
+  const link = document.createElement("a");
+  link.href = dataURL;
+  link.download = "image.png";
+  link.click();
+}
+ 
+// 创建GLTF导出器
+const exporter = new GLTFExporter();
+function saveScene_Json()
+{
+    // 导出场景为GLTF文件
+    exporter.parse(carbmw, function (gltf) {
+      const gltfBlob = new Blob([JSON.stringify(gltf)], { type: 'application/octet-stream' });
+
+      // 下载GLTF文件
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(gltfBlob);
+      link.download = 'scene.gltf';
+      link.click();
+    });
+}
+
+function explosiveView() {
+  // 获取场景中的所有网格对象
+  var meshes = [];
+  scene.traverse(function(object) {
+    if (object.isMesh) {
+      meshes.push(object);
+    }
+  });
+
+  var modelCenter = new THREE.Vector3(0, 0, 0);
+
+  // 计算模型的中心点和包围盒中心点的向量，并在xoy平面上进行平移
+  for (var i = 0; i < meshes.length; i++) {
+    var mesh = meshes[i];
+    mesh.geometry.computeBoundingBox(); // 计算几何体的包围盒
+    var boundingBox = mesh.geometry.boundingBox;
+
+    // 计算包围盒的中心点
+    var boundingBoxCenter = new THREE.Vector3();
+    boundingBox.getCenter(boundingBoxCenter);
+
+    // 使用网格对象的装配矩阵来计算爆炸向量
+    var explosionVector = boundingBoxCenter.clone();
+    explosionVector.applyMatrix4(mesh.matrix);
+    explosionVector.sub(modelCenter);
+    explosionVector.y = 0;
+
+    // 修改网格对象的位置
+    var explosionDistance = explosionVector.length() * 2;
+    explosionVector.normalize().multiplyScalar(explosionDistance);
+    mesh.position.add(explosionVector);
+  }
+}
+
+function restoreExplosiveView() {
+  // 获取场景中的所有网格对象
+  var meshes = [];
+  scene.traverse(function (object) {
+    if (object.isMesh) {
+      meshes.push(object);
+    }
+  });
+
+  for (var i = 0; i < meshes.length; i++) {
+    var mesh = meshes[i];
+    mesh.position.set(0, 0, 0); // 将位置设置为原点
+  }
+}
 
 </script>
 
@@ -782,7 +1000,17 @@ window.addEventListener('click', (event) => {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
-
+.dialog-camera{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  transform: translate(120, 92%);
+  background-color: #ffffff;
+  width: 200px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
 .dialog-title {
   font-size: 18px;
   margin-top: 0;
@@ -805,10 +1033,6 @@ window.addEventListener('click', (event) => {
   margin-left: 10px;
 }
 
-.openfile-title {
-  position: absolute;
-
-}
 .openfile-title .custom-button {
   border-radius: 10px; /* 圆角半径 */
   font-size: 24px; /* 字体大小 */
