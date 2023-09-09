@@ -10,6 +10,7 @@ The GIF above demonstrates the basic usage rules of the software, which mainly i
     you can modify the features of the selected components. To deselect, simply click the right mouse button.
 
 ![Image](https://github.com/mu116699/MSC-Three-Gltf-Reader/blob/master/Image/Explosive%20View.png)
+
 The editing features provided are as follows:
 
     1.The camera positioning works in conjunction with the "Save Image" function. First, adjust the camera position, and then use "Save Image" to save the image.
