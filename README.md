@@ -7,7 +7,7 @@ The GIF above demonstrates the basic usage rules of the software, which mainly i
 
     1.View Manipulation: Right-click with the mouse to move and rotate the view; use the mouse scroll wheel to zoom the view; right-click again to perform movement operations.
     2. Model Selection and Editing: Click on a model to select its components. If multiple models intersect, the topmost component will be selected. Once selected, 
-    you can modify the features of the selected components. To deselect, simply click the right mouse button.
+    you can modify the attribute of the selected components. To deselect, simply click the right mouse button.
 
 ![Image](https://github.com/mu116699/MSC-Three-Gltf-Reader/blob/master/Image/Explosive%20View.png)
 
@@ -33,4 +33,5 @@ The provided installation package:
 Two Windows installation packages have been compiled and are available for download and use.
 
 License
-Detectron2 is released under the MIT.
+
+MSC-Three-Gltf-Reader is released under the [MIT](https://github.com/mu116699/MSC-Three-Gltf-Reader/blob/master/LICENSE).
